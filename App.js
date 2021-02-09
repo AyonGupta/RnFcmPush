@@ -9,6 +9,7 @@
 import PushNotification from "react-native-push-notification";
 import Firebase from "@react-native-firebase/app";
 import React, {useEffect} from 'react';
+import messaging from '@react-native-firebase/messaging';
 import {
   SafeAreaView,
   StyleSheet,
@@ -44,6 +45,16 @@ PushNotification.configure({
 
     // (required) Called when a remote is received or opened, or local notification is opened
     //notification.finish(PushNotificationIOS.FetchResult.NoData);
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      PushNotification.localNotification({
+        message: remoteMessage.notification.body,
+        title: remoteMessage.notification.title,
+        bigPictureUrl: remoteMessage.notification.android.imageUrl,
+        smallIcon: remoteMessage.notification.android.imageUrl,
+      });
+    });
+    return unsubscribe;
+    
   },
 
   // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
